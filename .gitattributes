@@ -1,0 +1,4 @@
+# Normalise line endings so a Mac checkout matches what was committed.
+* text=auto eol=lf
+*.xlsx binary
+*.png binary
