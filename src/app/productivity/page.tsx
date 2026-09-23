@@ -97,6 +97,7 @@ export default async function ProductivityPage({
               nonBillable: formatHoursPlain(totals.nonBillableHours),
               productivity: formatPercent(totals.productivity),
               cost: formatMoney(totals.cost),
+              revenue: formatMoney(totals.revenue),
             }}
           />
         </div>
