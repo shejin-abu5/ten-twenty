@@ -41,7 +41,15 @@ interface DataTableProps<Row> {
   /** Renders without the surrounding card, for tables nested in another panel. */
   bare?: boolean;
   maxHeight?: string;
+  /**
+   * Freezes the first column so it stays put while the rest scrolls sideways.
+   * Nothing moves until the table is actually wider than its container.
+   */
+  pinFirstColumn?: boolean;
 }
+
+/** Sticky cells take their colour from the row so hover and totals stay in step. */
+const PINNED_CELL = 'sticky left-0 bg-inherit border-r';
 
 export function DataTable<Row>({
   title,
@@ -55,68 +63,75 @@ export function DataTable<Row>({
   action,
   bare = false,
   maxHeight,
+  pinFirstColumn = true,
 }: DataTableProps<Row>) {
+  const pinned = (index: number) => pinFirstColumn && index === 0;
+
   const matrix: CsvValue[][] = [
     columns.map((column) => column.header),
     ...rows.map((row) => columns.map((column) => column.value(row))),
   ];
 
   const table = (
-    <div className={cn('overflow-x-auto', maxHeight && 'overflow-y-auto')} style={{ maxHeight }}>
-      <Table>
-        <TableHeader className="sticky top-0 z-10 bg-background">
-          <TableRow className="hover:bg-transparent">
-            {columns.map((column) => (
-              <TableHead
+    <Table
+      containerClassName={cn(maxHeight && 'overflow-y-auto')}
+      containerStyle={maxHeight ? { maxHeight } : undefined}
+    >
+      <TableHeader className="sticky top-0 z-20">
+        <TableRow className="bg-background hover:bg-background">
+          {columns.map((column, index) => (
+            <TableHead
+              key={column.key}
+              className={cn(
+                'whitespace-nowrap text-xs font-medium uppercase tracking-wide text-muted-foreground',
+                column.align === 'right' && 'text-right',
+                pinned(index) && `${PINNED_CELL} z-10`,
+                column.headerClassName,
+              )}
+            >
+              {column.header}
+            </TableHead>
+          ))}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rows.map((row) => (
+          <TableRow key={rowKey(row)} className="bg-background hover:bg-muted">
+            {columns.map((column, index) => (
+              <TableCell
                 key={column.key}
                 className={cn(
-                  'whitespace-nowrap text-xs font-medium uppercase tracking-wide text-muted-foreground',
-                  column.align === 'right' && 'text-right',
-                  column.headerClassName,
+                  'py-2.5 text-sm',
+                  column.align === 'right' && 'num text-right tabular-nums',
+                  pinned(index) && `${PINNED_CELL} z-10`,
+                  column.className,
                 )}
               >
-                {column.header}
-              </TableHead>
+                {column.render ? column.render(row) : (column.value(row) ?? '—')}
+              </TableCell>
             ))}
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={rowKey(row)}>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.key}
-                  className={cn(
-                    'py-2.5 text-sm',
-                    column.align === 'right' && 'num text-right tabular-nums',
-                    column.className,
-                  )}
-                >
-                  {column.render ? column.render(row) : (column.value(row) ?? '—')}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-        {footer ? (
-          <TableFooter>
-            <TableRow className="hover:bg-transparent">
-              {columns.map((column) => (
-                <TableCell
-                  key={column.key}
-                  className={cn(
-                    'py-2.5 text-sm font-medium',
-                    column.align === 'right' && 'num text-right tabular-nums',
-                  )}
-                >
-                  {footer[column.key] ?? null}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableFooter>
-        ) : null}
-      </Table>
-    </div>
+        ))}
+      </TableBody>
+      {footer ? (
+        <TableFooter>
+          <TableRow className="bg-muted hover:bg-muted">
+            {columns.map((column, index) => (
+              <TableCell
+                key={column.key}
+                className={cn(
+                  'py-2.5 text-sm font-medium',
+                  column.align === 'right' && 'num text-right tabular-nums',
+                  pinned(index) && `${PINNED_CELL} z-10`,
+                )}
+              >
+                {footer[column.key] ?? null}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableFooter>
+      ) : null}
+    </Table>
   );
 
   const body = rows.length === 0 ? (empty ?? <TableEmpty />) : table;
