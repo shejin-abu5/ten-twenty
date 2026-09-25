@@ -101,6 +101,7 @@ export default async function DashboardPage({
               value={formatPercent(totals.margin)}
               tone={emphaticToneOf(totals.margin)}
               hint={`${formatMoney(totals.profit)} profit`}
+              shimmer
             />
           </StatGrid>
 
@@ -194,7 +195,7 @@ function HighlightCard({
       </div>
       <p
         className={cn(
-          'num shrink-0 text-2xl font-medium leading-none',
+          'num num-shimmer shrink-0 text-2xl font-medium leading-none',
           emphaticToneOf(summary.margin),
         )}
       >

@@ -14,6 +14,8 @@ interface StatCardProps {
    *  body face instead of the numeric one. */
   numeric?: boolean;
   footer?: ReactNode;
+  /** Sweeps a light band across the figure, for the one headline worth it. */
+  shimmer?: boolean;
 }
 
 export function StatCard({
@@ -24,6 +26,7 @@ export function StatCard({
   icon: Icon,
   numeric = true,
   footer,
+  shimmer = false,
 }: StatCardProps) {
   return (
     <div className="group flex flex-col px-5 py-4 transition-colors duration-200 hover:bg-muted/60">
@@ -47,6 +50,7 @@ export function StatCard({
         className={cn(
           'mt-3 font-medium',
           numeric ? 'num text-[1.5rem] leading-none' : 'text-lg leading-snug tracking-tight',
+          shimmer && 'num-shimmer',
           tone,
         )}
       >
