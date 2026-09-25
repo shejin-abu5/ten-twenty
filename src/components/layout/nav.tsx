@@ -49,14 +49,23 @@ function useIsActive() {
  * The current page is marked the way a ledger marks a line: a rule in the
  * margin, not a filled pill. The icon takes the ink only when the row is live.
  */
-export function Nav() {
+export function Nav({ collapsed = false }: { collapsed?: boolean }) {
   const isActive = useIsActive();
 
   return (
     <nav className="flex flex-col gap-7" aria-label="Main">
       {SECTIONS.map((section) => (
         <div key={section.label} className="flex flex-col">
-          <p className="ledger-label mb-2.5">{section.label}</p>
+          {/* Collapsing only fades text: nothing moves, so the rail never jitters mid-animation. */}
+          <p
+            className={cn(
+              'ledger-label mb-2.5 whitespace-nowrap transition-opacity duration-150',
+              collapsed && 'opacity-0',
+            )}
+            aria-hidden={collapsed || undefined}
+          >
+            {section.label}
+          </p>
           {section.items.map((item) => {
             const active = isActive(item.href);
             const Icon = item.icon;
@@ -65,8 +74,10 @@ export function Nav() {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
+                aria-label={collapsed ? item.label : undefined}
+                title={collapsed ? item.label : undefined}
                 className={cn(
-                  '-ml-5 flex items-center gap-2.5 border-l-2 py-1.5 pl-[18px] text-[0.9375rem] transition-colors duration-150',
+                  '-ml-5 flex items-center gap-2.5 whitespace-nowrap border-l-2 py-1.5 pl-[18px] text-[0.9375rem] transition-colors duration-150',
                   active
                     ? 'border-foreground font-medium text-foreground'
                     : 'border-transparent text-muted-foreground hover:text-foreground',
@@ -76,7 +87,9 @@ export function Nav() {
                   className={cn('size-4 shrink-0', active ? 'opacity-100' : 'opacity-70')}
                   aria-hidden
                 />
-                {item.label}
+                <span className={cn('transition-opacity duration-150', collapsed && 'opacity-0')}>
+                  {item.label}
+                </span>
               </Link>
             );
           })}

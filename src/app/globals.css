@@ -23,6 +23,7 @@
   --rule: oklch(0.898 0.004 258);
   --rule-strong: oklch(0.8 0.008 258);
   --wash: oklch(0.955 0.004 258);
+  --row-hover: var(--wash);
   --accent-ink: oklch(0.45 0.12 258);
 
   /* Profit and loss are states of one cell, not two series, so they are
@@ -73,13 +74,18 @@
 }
 
 .dark {
-  --paper: oklch(0.155 0.006 258);
-  --panel: oklch(0.195 0.006 258);
-  --ink: oklch(0.96 0.002 258);
-  --ink-muted: oklch(0.655 0.012 258);
+  /* Near-black, with a faint violet cast so it reads as ink rather than a dead
+     screen. */
+  --paper: oklch(0.13 0.008 290);
+  --panel: oklch(0.17 0.01 290);
+  --ink: oklch(0.97 0.002 290);
+  --ink-muted: oklch(0.66 0.01 290);
   --rule: oklch(1 0 0 / 10%);
   --rule-strong: oklch(1 0 0 / 22%);
   --wash: oklch(1 0 0 / 5%);
+  /* The wash pre-composited onto paper: pinned table cells inherit the row's
+     hover colour, and a translucent one lets scrolled cells show through. */
+  --row-hover: color-mix(in srgb, var(--paper), white 5%);
   --accent-ink: oklch(0.74 0.1 255);
 
   --positive: oklch(0.75 0.13 162);
@@ -123,6 +129,7 @@
   --color-panel: var(--panel);
   --color-rule: var(--rule);
   --color-rule-strong: var(--rule-strong);
+  --color-row-hover: var(--row-hover);
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);

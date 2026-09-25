@@ -1,23 +1,27 @@
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 import type { ReactNode } from 'react';
-import { Nav, NavBar } from './nav';
+import { NavBar } from './nav';
+import { Sidebar } from './sidebar';
+import { SIDEBAR_COOKIE } from './sidebar-cookie';
+import { ThemeToggle } from './theme-toggle';
 
 /**
  * Sidebar and page share one paper tone. The only thing between them is a
  * hairline, which is what keeps the shell from reading as a set of panels.
  */
-export function AppShell({ children }: { children: ReactNode }) {
+export async function AppShell({ children }: { children: ReactNode }) {
+  const collapsed = (await cookies()).get(SIDEBAR_COOKIE)?.value === '1';
+
   return (
     <div className="flex min-h-screen bg-paper">
-      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 flex-col gap-9 border-r px-5 py-7 lg:flex">
-        <Masthead />
-        <Nav />
-      </aside>
+      <Sidebar masthead={<Masthead />} defaultCollapsed={collapsed} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="border-b lg:hidden">
-          <div className="px-5 pb-4 pt-5">
+          <div className="flex items-start justify-between gap-4 px-5 pb-4 pt-5">
             <Masthead />
+            <ThemeToggle />
           </div>
           <NavBar />
         </div>

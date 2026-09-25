@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Instrument_Sans } from 'next/font/google';
 import { AppShell } from '@/components/layout/app-shell';
+import { ThemeProvider } from '@/components/layout/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
@@ -23,10 +24,13 @@ export const dynamic = 'force-dynamic';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={sans.variable}>
+    // next-themes sets the class on <html> before hydration.
+    <html lang="en" className={sans.variable} suppressHydrationWarning>
       <body className="font-sans antialiased">
-        <AppShell>{children}</AppShell>
-        <Toaster position="top-center" />
+        <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
+          <AppShell>{children}</AppShell>
+          <Toaster position="top-center" />
+        </ThemeProvider>
       </body>
     </html>
   );

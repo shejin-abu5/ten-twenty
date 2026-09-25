@@ -49,8 +49,13 @@ interface DataTableProps<Row> {
   pinFirstColumn?: boolean;
 }
 
-/** Sticky cells take their colour from the row so hover and totals stay in step. */
-const PINNED_CELL = 'sticky left-0 bg-inherit border-r';
+/**
+ * Sticky cells take their colour from the row so hover and totals stay in step.
+ * The divider is a pseudo-element: with collapsed borders a real `border-r`
+ * belongs to the table grid and scrolls away from the pinned cell.
+ */
+const PINNED_CELL =
+  'sticky left-0 bg-inherit after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border';
 
 export function DataTable<Row>({
   title,
@@ -99,7 +104,7 @@ export function DataTable<Row>({
         {rows.map((row) => (
           <TableRow
             key={rowKey(row)}
-            className="bg-paper transition-colors duration-100 hover:bg-muted"
+            className="bg-paper transition-colors duration-100 hover:bg-row-hover"
           >
             {columns.map((column, index) => (
               <TableCell
