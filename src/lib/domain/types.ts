@@ -73,7 +73,7 @@ export interface EmployeeMonthRate {
   nonBillableValue: number;
 }
 
-/** Every number behind one month's rates, kept so the audit page can show the working. */
+/** Every number behind one month's rates, kept so `npm run reconcile` can show the working. */
 export interface MonthlyRates {
   year: number;
   month: number;

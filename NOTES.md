@@ -27,6 +27,11 @@ instead. That belongs on the Assumptions page as a named policy, not baked in.
 
 ## What I cut, and why
 
+**A cost-audit page.** The month-by-month working is worth showing, but a page
+of it reads like a ledger and answers a question nobody asked on a Monday
+morning. `npm run reconcile` prints the same working in the terminal, which is
+where I actually wanted it while building.
+
 **Charts beyond the two that earn their place.** There's a bar chart for where
 time goes and a diverging bar for margin, both directly labelled. Everything else
 is a table, because the brief asks for legible tables and eleven projects don't
@@ -52,12 +57,6 @@ one this tool exists to solve.
 
 ## What I'm not happy with
 
-**The audit page is dense.** It shows the working for every month and every
-person, which is correct but it reads like a ledger. Someone querying one
-project's cost has to know which month to open. A "why does this number look like
-this?" path from a project row into the audit would be better than a page you
-navigate to.
-
 **`projectSummaries` walks the entry list more than once.** At 562 rows nobody
 will ever notice, and the clarity is worth more than the passes. At 50,000 rows
 it should group once and derive everything from that.
@@ -68,7 +67,7 @@ design failure; I think the alternative — revenue landing entirely in the mont
 of sale — is a bigger one, but I'm not certain a CFO would agree on first look.
 
 **No end-to-end browser test.** The cost model, the parsers and the re-upload
-rules are covered by 53 tests. The upload form itself I verified by hand and by
+rules are covered by 43 tests. The upload form itself I verified by hand and by
 testing the functions underneath it, not with Playwright driving a browser. It's
 the gap in the test suite I'd close first.
 
@@ -81,8 +80,8 @@ identity table the agency would have to maintain.
 
 Roughly eleven hours: two on reading the data and proving the cost model
 reconciles against the real workbooks before writing any UI, three on ingestion
-and persistence, five on the pages, and the rest on the messy-data fixtures,
-tests and this note.
+and persistence, five on the pages, and the rest on edge cases, tests and this
+note.
 
 The self-check drove the order deliberately — `npm run reconcile` printed the
 correct 2,400,000 before a single component existed, so every page since has been
