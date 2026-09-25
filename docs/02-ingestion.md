@@ -70,12 +70,14 @@ Handles: `May '25`, `January 2026`, `January`, `Jan-25`, `Sept 2025`, `2025-05`,
 `"Q1"` as January — it tokenises to `["q", "1"]`, and my code only looked at the
 numbers. Twenty hours got filed under the wrong month, which then absorbed a
 whole month's indirect pool and threw the reconciliation out by 97,000. The
-messy-workbook test caught it. Fix: track whether any word appeared that *wasn't*
+`parseMonth` test caught it. Fix: track whether any word appeared that *wasn't*
 a month name, and if so refuse the numeric fallback entirely. `Q1`, `Q1 2025` and
 `Total 12` all return `null` now.
 
 This is a good story to tell if asked about testing: the test existed to
-demonstrate a feature and instead found a real defect.
+demonstrate a feature and instead found a real defect. It lives in
+`tests/ingest.test.ts`, under "refuses to guess at something that is not a
+month".
 
 ### Year inference
 
@@ -105,13 +107,15 @@ row 13 because its month said Q1" is visible rather than silent.
 
 ## Detecting the wrong file
 
-`detectKind` sniffs the column captions before parsing. If you drop the salary
-sheet into the timesheet slot, you get:
+There is no separate sniffing step. `locateHeader` looks for the columns the
+chosen parser needs, and if the required ones are not there it throws:
 
-> "salaries-2025.xlsx" does not look like the timesheet.
-> Its columns match the salary overview instead. Upload it in that slot, or check the file.
+> Could not find the expected header row in sheet "Salaries".
+> Missing columns: hours. Checked the first 20 row(s). Is this the right file?
 
-rather than a stack trace. All five wrong-file paths were verified by hand.
+So dropping the salary sheet into the timesheet slot gives a readable message
+naming what was missing, rather than a stack trace. The upload page shows that
+message verbatim.
 
 ## Rows that get dropped
 

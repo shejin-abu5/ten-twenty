@@ -173,8 +173,8 @@ const indirectRate = billableHours > 0 ? indirectPool / billableHours : 0;
 unabsorbedPool: billableHours > 0 ? 0 : indirectPool,
 ```
 
-That month's cost is reported as **unabsorbed** — shown on the dashboard, in the
-audit page, and as its own line in the reconciliation. The honest answer: that
+That month's cost is reported as **unabsorbed** — shown on the dashboard and as
+its own line in the reconciliation. The honest answer: that
 money genuinely reached no project, so the app says so rather than hiding it or
 smearing it somewhere it does not belong.
 
@@ -415,9 +415,9 @@ just how much internal time each month carried. Salary steps from 197,000 to
 
 ## 10. "Why does someone have a direct rate of AED 854 per hour?"
 
-Open the Cost audit for January and Hana Yousef shows **854.70/h** against
-everyone else's 68–125. It looks wrong. It is not, and this is the most
-eye-catching number in the app, so prepare it.
+In January, Hana Yousef's direct rate comes out at **854.70/h** against everyone
+else's 68–125. It looks wrong. It is not, and this is the most eye-catching
+number the model produces, so prepare it.
 
 Hana is paid 20,000 and logged **23.4 hours**, all internal — meetings, leave,
 admin. `20,000 / 23.4 = 854.70`.
@@ -441,8 +441,9 @@ The two wrong alternatives, if they push:
 The model treats "logged a few internal hours" and "logged nothing at all" as the
 same economic situation — the whole salary goes into the pool — arriving there by
 two different routes (`nonBillableCost` for Hana, `unloggedSalaryCost` for
-someone with no rows at all). Both are separate columns on the audit page, which
-is why January shows 0 unlogged salaries and ~72,613 of internal time.
+someone with no rows at all). Both are kept as separate figures on
+`MonthlyRates`, which is why January carries 0 unlogged salaries and ~72,613 of
+internal time.
 
 ---
 
@@ -475,8 +476,8 @@ absorbedCost: number;
 And `tests/sample-data.test.ts` now asserts the charged column sums to total
 cost, so it cannot come back.
 
-**Second story, equally good:** the messy-workbook test was written to
-demonstrate a feature and instead found a real defect — `"Q1"` was parsing as
+**Second story, equally good:** a `parseMonth` test written to demonstrate a
+feature instead found a real defect — `"Q1"` was parsing as
 January, filing 20 hours in the wrong month and throwing the reconciliation out
 by about 97,000. The fix is the `hasUnknownWord` flag in
 `src/lib/ingest/cells.ts`: a numeric fallback is refused when the cell contains

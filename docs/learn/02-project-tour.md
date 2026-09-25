@@ -71,7 +71,6 @@ src/
     productivity/page.tsx   /productivity
     categories/page.tsx     /categories
     departments/page.tsx    + [name]/ for the drill-down
-    audit/page.tsx          /audit — shows the working for every rate
     upload/                 page.tsx + upload-form.tsx + actions.ts + types.ts
     settings/               page.tsx + assumptions-form.tsx + actions.ts
 
@@ -112,8 +111,8 @@ src/
     period-params.ts      URL <-> period filter
     utils.ts              cn() — merges Tailwind class names
 
-scripts/     seed, reconcile, reset, make:messy      (plain Node via tsx)
-tests/       5 files, 53 tests
+scripts/     seed, reconcile, reset      (plain Node via tsx)
+tests/       4 files, 43 tests
 sample-data/ the clean workbooks, plus messy/ copies that are deliberately broken
 data/        margin.db — created by seed/upload, gitignored
 ```
@@ -359,7 +358,6 @@ Handy if they point at the screen and ask "where does that come from?"
 | Categories page | `categoryBreakdown()` + `employeeCategoryMatrix()` | `domain/aggregate.ts` |
 | Departments | `departmentBreakdown()` + `projectRollup()` | `domain/aggregate.ts` |
 | Month-by-month table | `monthlyPoints()` | `domain/aggregate.ts` |
-| Cost audit page | `model.months` — the `MonthlyRates` objects | `domain/cost-model.ts` |
 | "Balanced" note | `model.reconciliation` | `domain/cost-model.ts` |
 | Gaps panel | `model.gaps` | `domain/cost-model.ts` (`findGaps`) |
 | Every money/percent string | `formatMoney` / `formatPercent` / `formatHours` | `lib/format.ts` |

@@ -77,8 +77,8 @@ const rates = computeMonthlyRates({ year, month, entries: monthEntries, salaries
 ```
 
 > "That function is the brief's arithmetic for one month, and it keeps the
-> working rather than only returning a rate — which is what makes the audit
-> page possible. For each person it builds salary, total hours, the
+> working rather than only returning a rate — which is what lets `npm run
+> reconcile` show its arithmetic. For each person it builds salary, total hours, the
 > billable/non-billable split, the direct rate, and the value they push into
 > the pool."
 
@@ -94,9 +94,8 @@ else                     unloggedSalaryCost += rate.salary;
 
 > "Two routes into the pool. Someone who logged hours contributes the value of
 > their non-billable time; someone who logged nothing contributes their whole
-> salary. Both are tracked separately because the audit page shows them as
-> separate columns — they're economically the same but they come from different
-> places, and a finance person will want to see which."
+> salary. Both are tracked separately because they're economically the same but
+> come from different places, and a finance person will want to see which."
 
 **Beat 3 — the pool and the guard.**
 
@@ -109,9 +108,9 @@ unabsorbedPool: billableHours > 0 ? 0 : indirectPool,
 
 > "Pool divided by billable hours — guarded, because a month with no billable
 > hours at all would be a divide by zero. Rather than inventing a number or
-> hiding it, that pool is reported as *unabsorbed*: it shows on the dashboard,
-> in the audit, and as its own line in the reconciliation. It's the only way the
-> balance check can fail, so it deserves to be visible."
+> hiding it, that pool is reported as *unabsorbed*: it shows on the dashboard
+> and as its own line in the reconciliation. It's the only way the balance check
+> can fail, so it deserves to be visible."
 
 **Beat 4 — costing every row. This is the line to linger on.**
 
@@ -320,7 +319,7 @@ let hasUnknownWord = false;
 if (hasUnknownWord) return null;
 ```
 
-> "This flag exists because of a real defect. I wrote the messy-workbook test to
+> "This flag exists because of a real defect. I wrote a `parseMonth` test to
 > demonstrate the handling and it found that `Q1` was parsing as January — the
 > numeric fallback saw the `1`. It filed 20 hours in the wrong month and threw
 > the reconciliation out by about 97,000. The fix is: if the cell contains a

@@ -1,6 +1,8 @@
 # Overview — what was built and why
 
-*These docs are for you, not the interviewer. They are gitignored.*
+*These docs are for you, not the interviewer. They are **not** gitignored — the
+`/docs` rule is commented out, so they are tracked and already on `origin/dev`.
+Delete that branch before sharing the repo; `origin/master` is clean.*
 
 ## The one-sentence version
 
@@ -68,8 +70,8 @@ debugging a dashboard that looked plausible and was wrong.
 | `src/lib/model.ts` | Builds the CostModel once per request |
 | `src/app/*/page.tsx` | One file per page |
 | `src/components/ui-kit/` | Table, stat card, bars, health panels |
-| `scripts/` | seed, reconcile, reset, make:messy |
-| `tests/` | 53 tests |
+| `scripts/` | seed, reconcile, reset |
+| `tests/` | 43 tests |
 
 ## The numbers you should know by heart
 

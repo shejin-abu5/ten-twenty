@@ -110,11 +110,11 @@ being asked.
   2,400,000. Splitting it into *Charged* and *Absorbed* fixed it, and there's now
   a test asserting the charged column sums to total cost. This is a *good* story
   — it's precisely the failure mode the brief warns about, found and fixed.
-- **The `Q1` parser bug.** The messy-workbook test was written to demonstrate a
-  feature and instead found a real defect: `"Q1"` parsed as January, which filed
+- **The `Q1` parser bug.** A `parseMonth` test written to demonstrate a
+  feature instead found a real defect: `"Q1"` parsed as January, which filed
   20 hours in the wrong month and threw the reconciliation out by 97,000. Fixed
   by refusing the numeric fallback when an unrecognised word is present.
-- **No end-to-end browser test.** 53 tests cover the model, parsers and
+- **No end-to-end browser test.** 43 tests cover the model, parsers and
   re-upload. The upload form itself was verified by hand and by testing the
   functions beneath it. It's the first gap I'd close.
 - **The same-name-no-employee-number merge.** Known, documented, not fixed,
@@ -133,12 +133,14 @@ being asked.
    client work."
 5. Assumptions. Untick Hosting, save, return to the dashboard. "Costs moved,
    total didn't."
-6. Data page. Upload `sample-data/messy/` and let it report its gaps.
+6. Data page. Re-upload `sample-data/timesheet-2025.xlsx` and point at the
+   re-upload rules: the months in the file are replaced, the rest of the year is
+   untouched, and the row count does not double.
 
 ## 6. Commands, if they ask you to run something
 
 ```bash
 npm run reconcile   # prints the year's totals and the self-check
-npm test            # 53 tests
+npm test            # 43 tests
 npm run seed -- --reset
 ```

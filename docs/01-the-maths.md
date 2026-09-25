@@ -195,10 +195,10 @@ enhancements and hosting both deeply negative.
 
 ## "Why does someone have a direct rate of AED 854 per hour?"
 
-Open the Cost audit for January and you'll see Hana Yousef at **854.70/h** and
-Omar Zayed at **704.23/h**, against everyone else's 68–125. This looks wrong. It
-isn't, and you should be ready to explain it, because it is the most
-eye-catching number on the audit page.
+In January, Hana Yousef's direct rate is **854.70/h** and Omar Zayed's is
+**704.23/h**, against everyone else's 68–125. This looks wrong. It isn't, and you
+should be ready to explain it, because it is the most eye-catching number the
+model produces.
 
 Hana is paid 20,000 in January and logged **23.4 hours**, all of it internal —
 meetings, leave, admin. `20,000 ÷ 23.4 = 854.70`.
@@ -220,9 +220,9 @@ The two ways this could have been got wrong:
 The model treats "logged a few internal hours" and "logged nothing at all" as the
 same economic situation — the whole salary goes into the pool — and arrives there
 by two different routes (`nonBillableCost` for Hana, `unloggedSalaryCost` for
-someone with no rows at all). Both are visible as separate columns in the audit,
-which is why the January row shows 0 unlogged salaries and 72,613 of internal
-time.
+someone with no rows at all). Both are kept as separate figures on
+`MonthlyRates`, which is why January carries 0 unlogged salaries and 72,613 of
+internal time.
 
 A good line to use: *"the rate looks odd because she only logged 23 hours; what
 matters is that 23.4 × 854.70 is exactly her 20,000 salary, and all of it goes

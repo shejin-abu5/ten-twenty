@@ -1,7 +1,12 @@
 # Learn this codebase from zero
 
-Private study folder. It lives under `docs/`, which `.gitignore` already
-excludes (`.gitignore:48 → /docs`), so nothing in here is committed or pushed.
+Private study folder.
+
+> **WARNING — these files are NOT ignored.** The `/docs` rule in `.gitignore`
+> is commented out (`# /docs`), so every file in here is tracked by git and is
+> already pushed to `origin/dev`. `origin/master` is clean. Delete the `dev`
+> branch before you share the repo, or these notes ship with your submission.
+
 No file in `src/` was touched to produce these notes.
 
 You said: *"I don't know Next.js and I know only some basics of Node."* These
@@ -20,9 +25,11 @@ notes assume exactly that and nothing more.
 | 5 | `05-interview-qa.md` | ~70 questions with answers you can say out loud. | 90 min |
 | 6 | `06-live-change-drills.md` | 8 changes to practise typing, with exact code. **Do these, don't read them.** | 90 min |
 | 7 | `07-cheatsheet.md` | One page. Glance at it 10 minutes before the call. | 5 min |
+| 8 | `08-what-was-cut.md` | What was trimmed from the app after it worked, and why. Your answer to "this looks like thirty hours". | 15 min |
 
 Total: about a working day. If you only have two hours: file 3, then file 7,
-then do drills 1, 2 and 3 in file 6.
+then do drills 1, 2 and 3 in file 6. Read file 8 whenever you like — it is
+short, and it is the one that explains the shape of the submission.
 
 ---
 
@@ -74,7 +81,7 @@ Then, in a second terminal:
 
 ```bash
 npm run reconcile  # the numbers, proven, without a browser
-npm test           # 53 tests
+npm test           # 43 tests
 ```
 
 Reading code you have never seen run is three times harder than reading code

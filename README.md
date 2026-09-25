@@ -27,10 +27,9 @@ Data page.
 | Command | What it does |
 | --- | --- |
 | `npm run reconcile` | Prints the year's totals and runs the brief's self-check in the terminal |
-| `npm test` | 53 tests: the cost model, the parsers, re-upload behaviour, and the two sample workbooks |
+| `npm test` | Tests for the cost model, the parsers, re-upload behaviour, and the sample workbooks |
 | `npm run seed -- --reset` | Wipes the database first, then reloads the sample year |
 | `npm run db:reset` | Empties every table |
-| `npm run make:messy` | Regenerates the deliberately broken workbooks in `sample-data/messy/` |
 | `npm run typecheck` / `npm run lint` | Both clean |
 
 ### Checking the numbers without opening the app
@@ -62,7 +61,6 @@ the numbers on trust.
 | **Productivity** | Billable ÷ total hours per person, filterable by month and year |
 | **Categories** | Where the time goes, plus the person × category pivot finance builds by hand |
 | **Departments** | Hours and cost per department; click one for the people inside it |
-| **Cost audit** | Every rate the dashboard uses and how it was derived |
 | **Data** | Upload the three files, see what each upload changed, and the parse history |
 | **Assumptions** | Which categories are billable, and the monthly overhead — no code editing |
 
@@ -136,8 +134,8 @@ person never appears twice.
 
 **A month with cost but no billable hours** has nothing to spread its pool
 across. Rather than hide it or divide by zero, that amount is reported as
-unabsorbed on the dashboard and in the audit, and is excluded from the balance
-check as a separate line.
+unabsorbed on the dashboard, and is excluded from the balance check as a
+separate line.
 
 **Overhead is one figure applied to every loaded month.** The brief says "a
 monthly overhead figure", so it is one number, not twelve.
@@ -164,25 +162,6 @@ and every issue found, so it is always possible to see what a file did.
 
 ---
 
-## Messy data
-
-`sample-data/messy/` holds a deliberately broken copy of one month. Upload those
-three files on the Data page to see the handling first-hand. Between them they
-carry: a header buried under two rows of preamble, four spellings of the same
-month (`March '25`, `March 2025`, `Mar-25`, and a bare `March`), `-` for empty
-cells, a salary typed as `12,500`, a row with no employee, an unreadable month
-(`Q1`), a missing category, a ref code with no price, a priced project with no
-hours, a person with hours but no salary, a duplicate ref code, and two months of
-payroll with no timesheet behind them.
-
-All of it is absorbed or reported; none of it crashes. `tests/messy-workbook.test.ts`
-is the contract for exactly what happens to each one.
-
-Uploading the wrong file in the wrong slot is caught too — the columns are
-sniffed, and the error says what the file actually looks like rather than
-"parse failed".
-
----
 
 ## How it's put together
 

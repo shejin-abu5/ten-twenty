@@ -48,8 +48,8 @@ in `npm run reconcile`: 2,400,000 expected, 2,400,000 allocated, difference
 
 **A5. What if a month has salaries but nobody logged billable hours?**
 "The indirect rate would be a division by zero, so it's guarded. That pool is
-reported as *unabsorbed* — on the dashboard, in the audit, and as its own line
-in the reconciliation. It's the only way the balance check can fail, which is
+reported as *unabsorbed* — on the dashboard and as its own line in the
+reconciliation. It's the only way the balance check can fail, which is
 exactly why it's a separate line rather than folded in. The honest statement is
 that the money reached no project."
 
@@ -142,9 +142,11 @@ the header don't matter. If a required column is missing it throws an
 'parse failed'."
 
 **B2. What if I upload the wrong file in the wrong slot?**
-"It's caught, because the columns are sniffed. The error says what the file
-actually looks like rather than failing abstractly. There's a messy-data fixture
-for exactly that."
+"It's caught by the header finder. Each parser declares the columns it needs, and
+if the required ones aren't in the first twenty rows it throws an `IngestError`
+naming the missing column — 'Missing columns: hours. Is this the right file?' —
+which the upload page shows as-is. There are tests for a sheet with no hours
+column and a salary sheet with no month columns."
 
 **B3. How do you parse the months? The sheets are inconsistent.**
 "`parseMonth` handles `May '25`, `January 2026`, a bare `January`, a real date
@@ -196,14 +198,12 @@ is 36 KB. Files are read fully into memory — streaming would be solving a
 problem nobody has at forty people, and that's in NOTES.md as a deliberate cut."
 
 **B11. Show me the messy data handling.**
-"`sample-data/messy/` has a deliberately broken copy of one month — a header
-buried under two rows of preamble, four spellings of March, `-` for empties, a
-salary typed as `12,500`, a row with no employee, an unreadable `Q1`, a missing
-category, a ref code with no price, a priced project with no hours, a person
-with hours and no salary, a duplicate ref code, and two months of payroll with
-no timesheet behind them. Upload them and everything is either absorbed or
-reported; nothing crashes. `tests/messy-workbook.test.ts` is the contract for
-exactly what happens to each one."
+"`tests/ingest.test.ts` is the contract. It covers a header buried under two rows
+of preamble, four spellings of the same month, `-` for empties, a salary typed as
+`12,500`, a row with no hours, an unreadable `Q1`, a duplicate ref code and a
+project with no price. Each one is either absorbed or reported as an issue, and
+the issues are stored with the upload and listed on the Data page — so 'we
+skipped row 13 because its month said Q1' is visible rather than silent."
 
 **B12. Why ExcelJS and not SheetJS?**
 "SheetJS is the better parser and the industry default. Its npm build carries
@@ -307,8 +307,8 @@ no JSON hand-rolling."
 **D4. What does `revalidatePath` do?**
 "Invalidates the cached render for that path and everything under the layout, so
 the next render re-reads the database. It's why saving an assumption instantly
-changes the dashboard, the audit page and every project page with no client
-state management at all."
+changes the dashboard and every project page with no client state management at
+all."
 
 **D5. Why `force-dynamic`?**
 "Every page reads SQLite at request time, so nothing is prerenderable at build
@@ -423,7 +423,7 @@ earn its place; over 12 it doesn't."
 ## F. Testing and quality
 
 **F1. What do you test?**
-"53 tests in five files: the cost model including the brief's self-check and the
+"43 tests in four files: the cost model including the brief's self-check and the
 awkward months, the cell and header parsers, the re-upload rules proving a
 corrected month leaves the rest of the year intact, and both sample workbooks
 end to end — the clean one and the deliberately messy one."
@@ -442,7 +442,7 @@ functions underneath it. That's the first gap I'd close — Playwright driving t
 three file inputs and asserting the outcome cards."
 
 **F4. Did a test ever find a real bug?**
-"Yes, twice. The messy-workbook test found that `Q1` was parsing as January —
+"Yes, twice. A `parseMonth` test found that `Q1` was parsing as January —
 20 hours filed in the wrong month, about 97,000 out on the reconciliation. And
 the reconciliation assertion caught a double-count I'd shipped on the Categories
 page, where one Cost column mixed allocated and direct cost and totalled
@@ -479,11 +479,10 @@ productivity is judged rather than just reported. Then per-month overhead,
 because real overhead moves. Then a side-by-side year comparison."
 
 **G3. What are you least happy with?**
-"The audit page is dense — it shows the working for every month and every
-person, which is correct but reads like a ledger. Someone asking 'why is this
-project's cost so high' has to know which month to open. A 'why does this number
-look like this' path from a project row into the audit would be better than a
-page you navigate to."
+"There's no path in the UI from a number back to its working. If someone asks
+'why is this project's cost so high', the answer is in `npm run reconcile` or in
+the code, not on the screen. I'd want a 'why does this number look like this'
+link from a project row rather than making someone leave the app."
 
 **G4. What did you cut, and why?**
 "Authentication and multi-tenancy — it's a local tool for one agency as
@@ -541,9 +540,9 @@ than instant recall — that is literally the skill they are hiring.
 **H3. This looks over-engineered for a one-week exercise.**
 "Fair challenge. The part I'd defend is the four-layer split, because it's what
 makes the numbers provable from a terminal and it took no extra time. The part
-I'd concede is the audit page, which is more machinery than a reviewer needs —
-though the brief asked to show the cost rates, and once I'd built the model
-keeping the working was nearly free."
+I'd concede is that the model keeps more working than any screen shows — every
+month's rates, both routes into the pool — because I needed it to prove the
+self-check before I trusted any page."
 
 **H4. There's a bug: [something you can't immediately explain].**
 "Let's look. What were you doing when you saw it?" Reproduce, form a hypothesis
@@ -552,14 +551,14 @@ because that's the only place that value is set" is the right register.
 
 **H5. Why should we trust these numbers?**
 "You shouldn't have to — that's the design. The self-check is at the top of the
-dashboard, the audit page shows every rate and how it was derived, every gap in
-the data is listed rather than hidden, and `npm run reconcile` prints the whole
-thing in a terminal in two seconds. If it ever stops balancing, the app says so
+dashboard, every gap in the data is listed rather than hidden, and
+`npm run reconcile` prints every month's rates and the whole balance check in a
+terminal in two seconds. If it ever stops balancing, the app says so
 in red."
 
 **H6. What's the weakest part of this submission?**
-"No end-to-end test on the upload form, and the audit page's density. And I'll
-add one more: the same-name-without-employee-number merge is a real hole. It's
+"No end-to-end test on the upload form. And the same-name-without-employee-number
+merge is a real hole. It's
 documented and not fixed, because fixing it properly needs an identity table the
 agency would maintain, and inventing one seemed worse than naming the limit."
 

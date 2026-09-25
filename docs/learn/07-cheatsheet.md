@@ -166,7 +166,8 @@ Then put it back.
    it."
 4. Productivity — "77% agency-wide, and here's who never touches client work."
 5. Assumptions — untick Hosting, save, back to the dashboard.
-6. Data page — upload `sample-data/messy/` and let it report its gaps.
+6. Data page — re-upload `sample-data/timesheet-2025.xlsx`; the months in the
+   file are replaced, the rest of the year is untouched, rows don't double.
 
 ---
 

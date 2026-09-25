@@ -8,7 +8,6 @@ import {
   FolderKanban,
   Gauge,
   LayoutDashboard,
-  ScrollText,
   Settings,
   Upload,
 } from 'lucide-react';
@@ -33,7 +32,6 @@ const SECTIONS = [
   {
     label: 'Working',
     items: [
-      { href: '/audit', label: 'Cost audit', icon: ScrollText },
       { href: '/upload', label: 'Data', icon: Upload },
       { href: '/settings', label: 'Assumptions', icon: Settings },
     ],

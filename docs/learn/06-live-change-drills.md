@@ -476,7 +476,7 @@ Everything on screen is findable by searching for its own text.
 | See this on screen | Search for | Lands in |
 | --- | --- | --- |
 | "Billable %" column header | `Billable %` | the page's columns array |
-| "Cost audit" in the sidebar | `Cost audit` | `components/layout/nav.tsx` |
+| "Productivity" in the sidebar | `Productivity` | `components/layout/nav.tsx` |
 | "reconciles to payroll" note | `reconcil` | `ui-kit/data-health.tsx` |
 | A money figure's formatting | `formatMoney` | `lib/format.ts` |
 | The upload result cards | `Rows skipped` | `app/upload/upload-form.tsx` |

@@ -361,8 +361,8 @@ revalidatePath('/', 'layout');
 
 That means: "throw away the cached render for `/` and everything under that
 layout — i.e. every page." The next render re-reads SQLite. That single line is
-why saving on the Assumptions page instantly changes the Dashboard, the Audit
-page and the project pages, with no client-side state management anywhere.
+why saving on the Assumptions page instantly changes the Dashboard and the
+project pages, with no client-side state management anywhere.
 
 The same call sits in `src/app/upload/actions.ts` after every successful upload
 and after `clearData()`.
@@ -477,7 +477,7 @@ That is why imports read `@/lib/domain/aggregate` rather than
 | `npm run dev` | Dev server on :3000. Compiles on demand, hot-reloads on save. |
 | `npm run build` | Production compile plus typecheck. |
 | `npm start` | Serves the built output. |
-| `npm test` | Vitest, 53 tests. Node only — no browser, no Next. |
+| `npm test` | Vitest, 43 tests. Node only — no browser, no Next. |
 | `npm run seed` | `tsx scripts/seed.ts` — parses `sample-data/` into `data/margin.db`. |
 | `npm run reconcile` | Prints the year's totals and the self-check in the terminal. |
 | `npm run db:reset` | Empties every table. |
