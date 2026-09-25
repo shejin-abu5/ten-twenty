@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
+import { Banknote, Clock, Percent, Timer, TrendingDown, TrendingUp, Wallet, type LucideIcon } from 'lucide-react';
 import { PeriodFilter } from '@/components/filters/period-filter';
 import { DataTable, type Column } from '@/components/ui-kit/data-table';
 import { GapsPanel, ReconciliationNote } from '@/components/ui-kit/data-health';
 import { MarginBar } from '@/components/ui-kit/bars';
-import { NoDataState } from '@/components/ui-kit/empty-state';
+import { NoDataState, PeriodEmpty } from '@/components/ui-kit/empty-state';
 import { PageHeader } from '@/components/ui-kit/page-header';
 import { StatCard, StatGrid } from '@/components/ui-kit/stat-card';
 import {
@@ -79,24 +79,24 @@ export default async function DashboardPage({
       />
 
       {entries.length === 0 ? (
-        <div className="rounded-lg border border-dashed bg-background px-6 py-16 text-center">
-          <h2 className="text-base font-semibold">No hours were logged in this period</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Pick another month, or upload the timesheet for {describeFilter(filter)}.
-          </p>
-        </div>
+        <PeriodEmpty>
+          No hours were logged in this period. Pick another month, or upload the timesheet for{' '}
+          {describeFilter(filter)}.
+        </PeriodEmpty>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-10">
           <StatGrid>
             <StatCard
+              icon={Clock}
               label="Total hours"
               value={formatHoursPlain(totals.totalHours)}
               hint={`${formatPercent(totals.productivity)} of it billable`}
             />
-            <StatCard label="Billable hours" value={formatHoursPlain(totals.billableHours)} hint={`${formatHoursPlain(totals.nonBillableHours)} h internal`} />
-            <StatCard label="Cost" value={formatMoney(totals.cost)} hint="Salaries and overhead charged to billable work" />
-            <StatCard label="Revenue" value={formatMoney(totals.revenue)} hint="Contract value earned in this period" />
+            <StatCard icon={Timer} label="Billable hours" value={formatHoursPlain(totals.billableHours)} hint={`${formatHoursPlain(totals.nonBillableHours)} h internal`} />
+            <StatCard icon={Wallet} label="Cost" value={formatMoney(totals.cost)} hint="Salaries and overhead charged to billable work" />
+            <StatCard icon={Banknote} label="Revenue" value={formatMoney(totals.revenue)} hint="Contract value earned in this period" />
             <StatCard
+              icon={Percent}
               label="Margin"
               value={formatPercent(totals.margin)}
               tone={emphaticToneOf(totals.margin)}
@@ -104,15 +104,15 @@ export default async function DashboardPage({
             />
           </StatGrid>
 
-          <div className="grid gap-3 lg:grid-cols-2">
+          <div className="grid items-start gap-4 lg:grid-cols-2">
             <ReconciliationNote check={model.reconciliation} />
             <GapsPanel gaps={model.gaps} />
           </div>
 
           {best && worst && best !== worst ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              <HighlightCard heading="Best margin" summary={best} query={query} />
-              <HighlightCard heading="Worst margin" summary={worst} query={query} />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <HighlightCard heading="Best margin" icon={TrendingUp} summary={best} query={query} />
+              <HighlightCard heading="Worst margin" icon={TrendingDown} summary={worst} query={query} />
             </div>
           ) : null}
 
@@ -132,7 +132,7 @@ export default async function DashboardPage({
             }}
           />
 
-          <div className={cn('grid gap-6', filter.month === null && 'xl:grid-cols-[1.35fr_1fr]')}>
+          <div className={cn('grid items-start gap-10', filter.month === null && 'xl:grid-cols-[1.35fr_1fr]')}>
             {filter.month === null ? (
               <DataTable
                 title="Month by month"
@@ -161,36 +161,45 @@ export default async function DashboardPage({
 
 function HighlightCard({
   heading,
+  icon: Icon,
   summary,
   query,
 }: {
   heading: string;
+  icon: LucideIcon;
   summary: ProjectSummary;
   query: string;
 }) {
   return (
     <Link
       href={`/projects/${encodeURIComponent(summary.project.refCode)}${query}`}
-      className="group flex items-start justify-between gap-4 rounded-lg border bg-background p-4 transition-colors hover:bg-accent/50"
+      className="group flex min-w-0 items-end justify-between gap-4 rounded-lg border px-5 py-4 transition-colors duration-150 hover:bg-muted"
     >
       <div className="min-w-0">
-        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <p className="ledger-label flex items-center gap-1.5">
+          <Icon
+            aria-hidden
+            strokeWidth={1.5}
+            className={cn('size-4 shrink-0', emphaticToneOf(summary.margin))}
+          />
           {heading}
         </p>
-        <p className="mt-1 truncate text-sm font-medium">
+        <p className="mt-3 truncate text-sm font-medium underline-offset-4 group-hover:underline">
           {summary.project.name ?? summary.project.refCode}
         </p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
+        <p className="num mt-1.5 truncate text-xs text-muted-foreground">
           {summary.project.refCode} · {formatHours(summary.hours)} · {formatMoney(summary.revenue)}{' '}
           revenue
         </p>
       </div>
-      <div className="shrink-0 text-right">
-        <p className={cn('num text-xl font-semibold tabular-nums', emphaticToneOf(summary.margin))}>
-          {formatPercent(summary.margin)}
-        </p>
-        <ArrowUpRight className="ml-auto mt-1 size-3.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-      </div>
+      <p
+        className={cn(
+          'num shrink-0 text-2xl font-medium leading-none',
+          emphaticToneOf(summary.margin),
+        )}
+      >
+        {formatPercent(summary.margin)}
+      </p>
     </Link>
   );
 }
@@ -211,20 +220,19 @@ function projectColumns(query: string): Column<ProjectSummary>[] {
       ),
     },
     {
+      // Status lives on the Projects page. Here the question is only whether
+      // the work made money, so the column would be paid for in margin.
       key: 'name',
       header: 'Project',
       value: (row) => row.project.name ?? '',
       render: (row) => (
-        <span className="block max-w-[26rem] truncate text-muted-foreground" title={row.project.name ?? ''}>
+        <span
+          className="block max-w-[24rem] truncate text-muted-foreground"
+          title={row.project.name ?? ''}
+        >
           {row.project.name ?? '—'}
         </span>
       ),
-    },
-    {
-      key: 'status',
-      header: 'Status',
-      value: (row) => row.project.status ?? '',
-      render: (row) => <span className="text-muted-foreground">{row.project.status ?? '—'}</span>,
     },
     { key: 'hours', header: 'Hours', align: 'right', value: (row) => round(row.hours), render: (row) => formatHoursPlain(row.hours) },
     { key: 'revenue', header: 'Revenue', align: 'right', value: (row) => round(row.revenue), render: (row) => formatMoney(row.revenue) },

@@ -1,6 +1,7 @@
+import { Gauge, Timer, UserRound, Users, UserX } from 'lucide-react';
 import { PeriodFilter } from '@/components/filters/period-filter';
 import { DataTable, type Column } from '@/components/ui-kit/data-table';
-import { NoDataState } from '@/components/ui-kit/empty-state';
+import { NoDataState, PeriodEmpty } from '@/components/ui-kit/empty-state';
 import { PageHeader } from '@/components/ui-kit/page-header';
 import { StatCard, StatGrid } from '@/components/ui-kit/stat-card';
 import {
@@ -62,17 +63,18 @@ export default async function ProductivityPage({
       />
 
       {rows.length === 0 ? (
-        <div className="rounded-lg border border-dashed bg-background px-6 py-16 text-center text-sm text-muted-foreground">
+        <PeriodEmpty>
           Nobody logged hours in {describeFilter(filter)}.
-        </div>
+        </PeriodEmpty>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-10">
           <StatGrid>
-            <StatCard label="People logging time" value={String(rows.length)} />
-            <StatCard label="Agency productivity" value={formatPercent(totals.productivity)} hint="Billable ÷ total hours" />
-            <StatCard label="Median person" value={formatPercent(median)} />
-            <StatCard label="Billable hours" value={formatHoursPlain(totals.billableHours)} />
+            <StatCard icon={Users} label="People logging time" value={String(rows.length)} />
+            <StatCard icon={Gauge} label="Agency productivity" value={formatPercent(totals.productivity)} hint="Billable ÷ total hours" />
+            <StatCard icon={UserRound} label="Median person" value={formatPercent(median)} />
+            <StatCard icon={Timer} label="Billable hours" value={formatHoursPlain(totals.billableHours)} />
             <StatCard
+              icon={UserX}
               label="Never billable"
               value={String(fullyInternal.length)}
               hint={
@@ -151,9 +153,9 @@ const COLUMNS: Column<EmployeeProductivity>[] = [
     value: (row) => percentValue(row.productivity),
     render: (row) => (
       <span className="flex items-center justify-end gap-2.5">
-        <span className="hidden h-2 w-20 rounded-full bg-muted sm:block" aria-hidden>
+        <span className="hidden h-1.5 w-20 rounded-[1px] bg-rule sm:block" aria-hidden>
           <span
-            className="block h-full rounded-full bg-foreground/80"
+            className="block h-full rounded-[1px] bg-foreground"
             style={{ width: `${(row.productivity ?? 0) * 100}%` }}
           />
         </span>

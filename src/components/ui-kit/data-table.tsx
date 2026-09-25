@@ -11,6 +11,7 @@ import {
 import type { CsvValue } from '@/lib/csv';
 import { cn } from '@/lib/utils';
 import { ExportCsvButton } from './export-csv-button';
+import { PanelHeading } from './panel';
 
 export interface Column<Row> {
   key: string;
@@ -38,7 +39,7 @@ interface DataTableProps<Row> {
   empty?: ReactNode;
   exportFilename?: string;
   action?: ReactNode;
-  /** Renders without the surrounding card, for tables nested in another panel. */
+  /** Renders without the surrounding panel, for tables nested in another one. */
   bare?: boolean;
   maxHeight?: string;
   /**
@@ -78,12 +79,12 @@ export function DataTable<Row>({
       containerStyle={maxHeight ? { maxHeight } : undefined}
     >
       <TableHeader className="sticky top-0 z-20">
-        <TableRow className="bg-background hover:bg-background">
+        <TableRow className="bg-paper hover:bg-paper">
           {columns.map((column, index) => (
             <TableHead
               key={column.key}
               className={cn(
-                'whitespace-nowrap text-xs font-medium uppercase tracking-wide text-muted-foreground',
+                'ledger-label h-auto whitespace-nowrap px-3 py-3 first:pl-5 last:pr-5',
                 column.align === 'right' && 'text-right',
                 pinned(index) && `${PINNED_CELL} z-10`,
                 column.headerClassName,
@@ -96,13 +97,16 @@ export function DataTable<Row>({
       </TableHeader>
       <TableBody>
         {rows.map((row) => (
-          <TableRow key={rowKey(row)} className="bg-background hover:bg-muted">
+          <TableRow
+            key={rowKey(row)}
+            className="bg-paper transition-colors duration-100 hover:bg-muted"
+          >
             {columns.map((column, index) => (
               <TableCell
                 key={column.key}
                 className={cn(
-                  'py-2.5 text-sm',
-                  column.align === 'right' && 'num text-right tabular-nums',
+                  'px-3 py-3 text-sm first:pl-5 last:pr-5',
+                  column.align === 'right' && 'num text-right',
                   pinned(index) && `${PINNED_CELL} z-10`,
                   column.className,
                 )}
@@ -114,14 +118,14 @@ export function DataTable<Row>({
         ))}
       </TableBody>
       {footer ? (
-        <TableFooter>
-          <TableRow className="bg-muted hover:bg-muted">
+        <TableFooter className="border-t-0 bg-transparent">
+          <TableRow className="bg-paper hover:bg-paper">
             {columns.map((column, index) => (
               <TableCell
                 key={column.key}
                 className={cn(
-                  'py-2.5 text-sm font-medium',
-                  column.align === 'right' && 'num text-right tabular-nums',
+                  'rule-total px-3 py-3 text-sm font-medium first:pl-5 last:pr-5',
+                  column.align === 'right' && 'num text-right',
                   pinned(index) && `${PINNED_CELL} z-10`,
                 )}
               >
@@ -138,24 +142,18 @@ export function DataTable<Row>({
 
   if (bare) return body;
 
+  // Clipped, or the cells' own background paints over the rounded corners and
+  // squares off the bottom of the panel.
   return (
-    <section className="rounded-lg border bg-background">
-      {title || action || exportFilename ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
-          <div className="min-w-0">
-            {title ? <h2 className="text-sm font-semibold tracking-tight">{title}</h2> : null}
-            {description ? (
-              <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
-            ) : null}
-          </div>
-          <div className="flex items-center gap-2">
+    <section className="min-w-0 overflow-hidden rounded-lg border">
+      <PanelHeading title={title} description={description}>
+        {action || exportFilename ? (
+          <>
             {action}
-            {exportFilename ? (
-              <ExportCsvButton filename={exportFilename} matrix={matrix} />
-            ) : null}
-          </div>
-        </div>
-      ) : null}
+            {exportFilename ? <ExportCsvButton filename={exportFilename} matrix={matrix} /> : null}
+          </>
+        ) : null}
+      </PanelHeading>
       {body}
     </section>
   );
@@ -163,7 +161,7 @@ export function DataTable<Row>({
 
 function TableEmpty() {
   return (
-    <p className="px-4 py-10 text-center text-sm text-muted-foreground">
+    <p className="px-5 py-12 text-center text-sm text-muted-foreground">
       Nothing to show for this period.
     </p>
   );

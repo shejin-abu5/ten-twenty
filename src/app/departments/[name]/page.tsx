@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Banknote, Clock, Gauge, Users, Wallet } from 'lucide-react';
 import { PeriodFilter } from '@/components/filters/period-filter';
 import { DataTable, type Column } from '@/components/ui-kit/data-table';
-import { NoDataState } from '@/components/ui-kit/empty-state';
+import { NoDataState, PeriodEmpty } from '@/components/ui-kit/empty-state';
 import { PageHeader } from '@/components/ui-kit/page-header';
 import { StatCard, StatGrid } from '@/components/ui-kit/stat-card';
 import {
@@ -84,17 +84,17 @@ export default async function DepartmentPage({
       />
 
       {entries.length === 0 ? (
-        <div className="rounded-lg border border-dashed bg-background px-6 py-16 text-center text-sm text-muted-foreground">
+        <PeriodEmpty>
           Nobody in {department} logged hours in {describeFilter(filter)}.
-        </div>
+        </PeriodEmpty>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-10">
           <StatGrid>
-            <StatCard label="People" value={String(people.length)} />
-            <StatCard label="Total hours" value={formatHoursPlain(totals.totalHours)} />
-            <StatCard label="Billable %" value={formatPercent(totals.productivity)} hint={`${formatHoursPlain(totals.billableHours)} h billable`} />
-            <StatCard label="Cost to projects" value={formatMoney(totals.cost)} />
-            <StatCard label="Revenue earned" value={formatMoney(totals.revenue)} />
+            <StatCard icon={Users} label="People" value={String(people.length)} />
+            <StatCard icon={Clock} label="Total hours" value={formatHoursPlain(totals.totalHours)} />
+            <StatCard icon={Gauge} label="Billable %" value={formatPercent(totals.productivity)} hint={`${formatHoursPlain(totals.billableHours)} h billable`} />
+            <StatCard icon={Wallet} label="Cost to projects" value={formatMoney(totals.cost)} />
+            <StatCard icon={Banknote} label="Revenue earned" value={formatMoney(totals.revenue)} />
           </StatGrid>
 
           <DataTable

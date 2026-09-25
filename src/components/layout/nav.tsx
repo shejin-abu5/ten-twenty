@@ -38,19 +38,27 @@ const SECTIONS = [
   },
 ];
 
-export function Nav() {
+const ITEMS = SECTIONS.flatMap((section) => section.items);
+
+function useIsActive() {
   const pathname = usePathname();
+  return (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+}
+
+/**
+ * The current page is marked the way a ledger marks a line: a rule in the
+ * margin, not a filled pill. The icon takes the ink only when the row is live.
+ */
+export function Nav() {
+  const isActive = useIsActive();
 
   return (
-    <nav className="flex flex-col gap-6" aria-label="Main">
+    <nav className="flex flex-col gap-7" aria-label="Main">
       {SECTIONS.map((section) => (
-        <div key={section.label} className="flex flex-col gap-1">
-          <p className="px-3 pb-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-            {section.label}
-          </p>
+        <div key={section.label} className="flex flex-col">
+          <p className="ledger-label mb-2.5">{section.label}</p>
           {section.items.map((item) => {
-            const active =
-              item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+            const active = isActive(item.href);
             const Icon = item.icon;
             return (
               <Link
@@ -58,19 +66,56 @@ export function Nav() {
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'flex items-center gap-2.5 rounded-md px-3 py-1.5 text-sm transition-colors',
+                  '-ml-5 flex items-center gap-2.5 border-l-2 py-1.5 pl-[18px] text-[0.9375rem] transition-colors duration-150',
                   active
-                    ? 'bg-accent font-medium text-accent-foreground'
-                    : 'text-muted-foreground hover:bg-accent/60 hover:text-foreground',
+                    ? 'border-foreground font-medium text-foreground'
+                    : 'border-transparent text-muted-foreground hover:text-foreground',
                 )}
               >
-                <Icon className="size-4 shrink-0" aria-hidden />
+                <Icon
+                  className={cn('size-4 shrink-0', active ? 'opacity-100' : 'opacity-70')}
+                  aria-hidden
+                />
                 {item.label}
               </Link>
             );
           })}
         </div>
       ))}
+    </nav>
+  );
+}
+
+/**
+ * Below the sidebar breakpoint the sections would cost half a screen before the
+ * first figure, so the links wrap onto as many rows as they need. Every
+ * destination stays on screen: nothing is hidden behind a sideways scroll.
+ */
+export function NavBar() {
+  const isActive = useIsActive();
+
+  return (
+    <nav className="flex flex-wrap gap-x-4 gap-y-1 px-5 pb-3" aria-label="Main">
+      {ITEMS.map((item) => {
+        const active = isActive(item.href);
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={active ? 'page' : undefined}
+            className={cn(
+              'flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 text-sm transition-colors duration-150',
+              active
+                ? 'bg-muted font-medium text-foreground'
+                : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            <Icon className="size-4 shrink-0" aria-hidden />
+            {item.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

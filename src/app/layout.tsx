@@ -1,12 +1,16 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Instrument_Sans } from 'next/font/google';
 import { AppShell } from '@/components/layout/app-shell';
 import { Toaster } from '@/components/ui/sonner';
-import { cn } from '@/lib/utils';
 import './globals.css';
 
-const sans = Geist({ subsets: ['latin'], variable: '--font-sans' });
-const mono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' });
+// One family throughout. Its tabular figures do the work a second, monospaced
+// face would otherwise be brought in for.
+const sans = Instrument_Sans({
+  subsets: ['latin'],
+  variable: '--font-instrument-sans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Margin Dashboard',
@@ -19,7 +23,7 @@ export const dynamic = 'force-dynamic';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn(sans.variable, mono.variable)}>
+    <html lang="en" className={sans.variable}>
       <body className="font-sans antialiased">
         <AppShell>{children}</AppShell>
         <Toaster position="top-center" />

@@ -48,7 +48,7 @@ export default function SettingsPage() {
         description="These two settings drive every number in the dashboard. They are stored with the data, not in the code."
       />
 
-      <div className="space-y-6">
+      <div className="space-y-10">
         <ReconciliationNote check={model.reconciliation} />
         <AssumptionsForm
           categories={categories}

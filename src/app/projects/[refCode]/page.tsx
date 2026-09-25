@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Clock, Coins, Percent, ReceiptText, Wallet } from 'lucide-react';
 import { MarginBar } from '@/components/ui-kit/bars';
 import { DataTable, type Column } from '@/components/ui-kit/data-table';
 import { PageHeader } from '@/components/ui-kit/page-header';
@@ -65,28 +65,33 @@ export default async function ProjectPage({
         }
       />
 
-      <div className="space-y-6">
+      <div className="space-y-10">
         {project.price == null ? (
-          <div className="rounded-lg border border-amber-500/40 bg-amber-500/5 px-4 py-3 text-sm">
-            <p className="font-medium">This project has no price</p>
-            <p className="mt-0.5 text-muted-foreground">
-              {formatHoursPlain(detail.lifetimeHours)} hours have been costed at{' '}
-              {formatMoney(detail.lifetimeCost)}, but there is nothing to measure it against. Add
-              the ref code to the project price sheet and re-upload it.
-            </p>
+          <div className="flex items-start gap-3 rounded-lg border px-5 py-4 text-sm">
+            <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-caution" aria-hidden />
+            <div className="min-w-0">
+              <p className="font-medium">This project has no price</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                {formatHoursPlain(detail.lifetimeHours)} hours have been costed at{' '}
+                {formatMoney(detail.lifetimeCost)}, but there is nothing to measure it against. Add
+                the ref code to the project price sheet and re-upload it.
+              </p>
+            </div>
           </div>
         ) : null}
 
         <StatGrid>
-          <StatCard label="Price" value={formatMoney(project.price)} hint="Contracted value" />
-          <StatCard label="Hours" value={formatHoursPlain(detail.lifetimeHours)} hint={`${detail.byEmployee.length} people`} />
-          <StatCard label="Cost" value={formatMoney(detail.lifetimeCost)} hint="Direct salary plus indirect share" />
+          <StatCard icon={ReceiptText} label="Price" value={formatMoney(project.price)} hint="Contracted value" />
+          <StatCard icon={Clock} label="Hours" value={formatHoursPlain(detail.lifetimeHours)} hint={`${detail.byEmployee.length} people`} />
+          <StatCard icon={Wallet} label="Cost" value={formatMoney(detail.lifetimeCost)} hint="Direct salary plus indirect share" />
           <StatCard
+            icon={Coins}
             label="Profit"
             value={formatMoney(detail.lifetimeProfit)}
             tone={emphaticToneOf(detail.lifetimeProfit)}
           />
           <StatCard
+            icon={Percent}
             label="Margin"
             value={formatPercent(detail.lifetimeMargin)}
             tone={emphaticToneOf(detail.lifetimeMargin)}
@@ -115,7 +120,7 @@ export default async function ProjectPage({
           }}
         />
 
-        <div className="grid gap-6 xl:grid-cols-2">
+        <div className="grid items-start gap-6 xl:grid-cols-2">
           <DataTable
             title="Hours by department"
             columns={DEPARTMENT_COLUMNS}

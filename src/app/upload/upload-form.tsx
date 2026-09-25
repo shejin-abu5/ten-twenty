@@ -1,17 +1,11 @@
 'use client';
 
 import { useActionState, useRef, useState, useTransition } from 'react';
-import {
-  AlertCircle,
-  CheckCircle2,
-  Database,
-  Loader2,
-  Trash2,
-  UploadCloud,
-} from 'lucide-react';
+import { Database, Loader2, Trash2, UploadCloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PanelHeading } from '@/components/ui-kit/panel';
 import { monthName } from '@/lib/domain/period';
 import { DATASET_LABELS, type DatasetKind } from '@/lib/ingest/types';
 import { cn } from '@/lib/utils';
@@ -53,22 +47,20 @@ export function UploadForm({ hasData }: { hasData: boolean }) {
           setSideState(null);
           action(formData);
         }}
-        className="rounded-lg border bg-background"
+        className="rounded-lg border"
       >
-        <div className="border-b px-4 py-3">
-          <h2 className="text-sm font-semibold tracking-tight">Upload spreadsheets</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            Upload one file or all three. Re-uploading a corrected month replaces only that month.
-          </p>
-        </div>
+        <PanelHeading
+          title="Upload spreadsheets"
+          description="Upload one file or all three. Re-uploading a corrected month replaces only that month."
+        />
 
-        <div className="grid gap-4 px-4 py-4 lg:grid-cols-3">
+        <div className="grid gap-6 px-5 py-5 lg:grid-cols-3">
           {SLOTS.map((slot) => (
-            <div key={slot.kind}>
+            <div key={slot.kind} className="min-w-0">
               <Label htmlFor={slot.kind} className="text-sm font-medium">
                 {DATASET_LABELS[slot.kind]}
               </Label>
-              <p className="mt-0.5 text-xs text-muted-foreground">{slot.hint}</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{slot.hint}</p>
               <Input
                 id={slot.kind}
                 name={slot.kind}
@@ -80,7 +72,7 @@ export function UploadForm({ hasData }: { hasData: boolean }) {
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-t px-4 py-3">
+        <div className="flex flex-wrap items-center gap-2 border-t px-5 py-4">
           <Button type="submit" size="sm" disabled={busy}>
             {uploading ? (
               <Loader2 className="size-3.5 animate-spin" aria-hidden />
@@ -127,18 +119,20 @@ export function UploadForm({ hasData }: { hasData: boolean }) {
 function OutcomeCard({ outcome }: { outcome: DatasetOutcome }) {
   const errors = outcome.issues.filter((issue) => issue.severity === 'error');
   const warnings = outcome.issues.filter((issue) => issue.severity === 'warning');
-  const Icon = outcome.ok ? CheckCircle2 : AlertCircle;
-
+  
   return (
     <section
       className={cn(
-        'rounded-lg border bg-background',
+        'rounded-lg border',
         outcome.ok ? 'border-positive/35' : 'border-negative/40',
       )}
     >
-      <div className="flex items-start gap-2.5 px-4 py-3">
-        <Icon
-          className={cn('mt-0.5 size-4 shrink-0', outcome.ok ? 'text-positive' : 'text-negative')}
+      <div className="flex items-start gap-3 px-5 py-4">
+        <span
+          className={cn(
+            'mt-[7px] size-1.5 shrink-0 rounded-full',
+            outcome.ok ? 'bg-positive' : 'bg-negative',
+          )}
           aria-hidden
         />
         <div className="min-w-0 flex-1">
@@ -148,11 +142,11 @@ function OutcomeCard({ outcome }: { outcome: DatasetOutcome }) {
               <span className="font-normal text-muted-foreground"> · {outcome.filename}</span>
             ) : null}
           </p>
-          <p className="mt-0.5 text-sm text-muted-foreground">{outcome.message}</p>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{outcome.message}</p>
           {outcome.hint ? <p className="mt-1 text-sm text-muted-foreground">{outcome.hint}</p> : null}
 
           {outcome.ok ? (
-            <dl className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
+            <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-1.5 text-xs text-muted-foreground">
               <Fact label="Sheet" value={outcome.sheetName} />
               <Fact label="Header row" value={outcome.headerRow} />
               <Fact label="Rows skipped" value={outcome.skippedRows} />
@@ -170,7 +164,7 @@ function OutcomeCard({ outcome }: { outcome: DatasetOutcome }) {
       </div>
 
       {outcome.issues.length > 0 ? (
-        <details className="border-t px-4 py-2 text-sm">
+        <details className="border-t px-5 py-3 text-sm">
           <summary className="cursor-pointer list-none text-xs text-muted-foreground">
             {errors.length} error{errors.length === 1 ? '' : 's'} and {warnings.length} warning
             {warnings.length === 1 ? '' : 's'} — show detail
@@ -181,7 +175,7 @@ function OutcomeCard({ outcome }: { outcome: DatasetOutcome }) {
                 <span
                   className={cn(
                     'shrink-0 font-medium',
-                    issue.severity === 'error' ? 'text-negative' : 'text-amber-600',
+                    issue.severity === 'error' ? 'text-negative' : 'text-caution',
                   )}
                 >
                   {issue.row ? `Row ${issue.row}` : issue.severity === 'error' ? 'Error' : 'Note'}
@@ -209,7 +203,7 @@ function Fact({ label, value }: { label: string; value: string | number | undefi
   return (
     <span className="flex gap-1.5">
       <dt>{label}</dt>
-      <dd className="font-medium text-foreground">{value}</dd>
+      <dd className="num font-medium text-foreground">{value}</dd>
     </span>
   );
 }

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Banknote, FolderKanban, Percent, ReceiptText, Wallet } from 'lucide-react';
 import { PeriodFilter } from '@/components/filters/period-filter';
 import { MarginBar } from '@/components/ui-kit/bars';
 import { DataTable, type Column } from '@/components/ui-kit/data-table';
@@ -66,13 +67,14 @@ export default async function ProjectsPage({
         }
       />
 
-      <div className="space-y-6">
+      <div className="space-y-10">
         <StatGrid>
-          <StatCard label="Projects" value={String(summaries.length)} hint={`${losing} losing money`} />
-          <StatCard label="Contracted value" value={formatMoney(contracted)} hint="Across all loaded periods" />
-          <StatCard label="Revenue in period" value={formatMoney(revenue)} />
-          <StatCard label="Cost in period" value={formatMoney(cost)} />
+          <StatCard icon={FolderKanban} label="Projects" value={String(summaries.length)} hint={`${losing} losing money`} />
+          <StatCard icon={ReceiptText} label="Contracted value" value={formatMoney(contracted)} hint="Across all loaded periods" />
+          <StatCard icon={Banknote} label="Revenue in period" value={formatMoney(revenue)} />
+          <StatCard icon={Wallet} label="Cost in period" value={formatMoney(cost)} />
           <StatCard
+            icon={Percent}
             label="Margin in period"
             value={formatPercent(revenue > 0 ? (revenue - cost) / revenue : null)}
             tone={emphaticToneOf(revenue > 0 ? (revenue - cost) / revenue : null)}

@@ -1,6 +1,8 @@
+import { CalendarDays, Clock, FolderKanban, Table2, Users } from 'lucide-react';
 import { DataTable, type Column } from '@/components/ui-kit/data-table';
 import { GapsPanel } from '@/components/ui-kit/data-health';
 import { PageHeader } from '@/components/ui-kit/page-header';
+import { Panel } from '@/components/ui-kit/panel';
 import { StatCard, StatGrid } from '@/components/ui-kit/stat-card';
 import { hasData, listUploads, type UploadRecord } from '@/lib/db/repository';
 import { monthAbbr } from '@/lib/domain/period';
@@ -25,15 +27,15 @@ export default function UploadPage() {
         description="The three spreadsheets, how they were read, and what each upload changed."
       />
 
-      <div className="space-y-6">
+      <div className="space-y-10">
         {loaded ? (
           <>
             <StatGrid>
-              <StatCard label="Timesheet rows" value={formatCount(model.entries.length)} />
-              <StatCard label="Hours" value={formatHoursPlain(totalHours)} />
-              <StatCard label="People" value={String(people)} />
-              <StatCard label="Months" value={String(model.months.length)} />
-              <StatCard label="Projects priced" value={String(model.projects.length)} />
+              <StatCard icon={Table2} label="Timesheet rows" value={formatCount(model.entries.length)} />
+              <StatCard icon={Clock} label="Hours" value={formatHoursPlain(totalHours)} />
+              <StatCard icon={Users} label="People" value={String(people)} />
+              <StatCard icon={CalendarDays} label="Months" value={String(model.months.length)} />
+              <StatCard icon={FolderKanban} label="Projects priced" value={String(model.projects.length)} />
             </StatGrid>
             <GapsPanel gaps={model.gaps} />
           </>
@@ -41,9 +43,8 @@ export default function UploadPage() {
 
         <UploadForm hasData={loaded} />
 
-        <section className="rounded-lg border bg-background p-4 text-sm">
-          <h2 className="text-sm font-semibold tracking-tight">What a re-upload does</h2>
-          <ul className="mt-2 space-y-1.5 text-muted-foreground">
+        <Panel title="What a re-upload does" bodyClassName="px-5 py-4">
+          <ul className="space-y-2.5 text-sm leading-relaxed text-muted-foreground">
             <li>
               <span className="font-medium text-foreground">Timesheet</span> — the months inside the
               file are deleted and rewritten. A file containing only March replaces March and leaves
@@ -60,7 +61,7 @@ export default function UploadPage() {
               code. Projects missing from the file keep their existing price.
             </li>
           </ul>
-        </section>
+        </Panel>
 
         <DataTable
           title="Upload history"
@@ -69,7 +70,7 @@ export default function UploadPage() {
           rows={uploads}
           rowKey={(row) => String(row.id)}
           empty={
-            <p className="px-4 py-10 text-center text-sm text-muted-foreground">
+            <p className="px-5 py-12 text-center text-sm text-muted-foreground">
               Nothing has been uploaded yet.
             </p>
           }
@@ -117,7 +118,7 @@ const COLUMNS: Column<UploadRecord>[] = [
     value: (row) => row.skippedRows,
     render: (row) =>
       row.skippedRows > 0 ? (
-        <span className="text-amber-600">{row.skippedRows}</span>
+        <span className="text-caution">{row.skippedRows}</span>
       ) : (
         <span className="text-muted-foreground">0</span>
       ),

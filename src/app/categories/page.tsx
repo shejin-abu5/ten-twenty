@@ -1,8 +1,10 @@
+import { BarChart3, Clock, Hourglass, Timer, TrendingDown } from 'lucide-react';
 import { PeriodFilter } from '@/components/filters/period-filter';
 import { MagnitudeBar } from '@/components/ui-kit/bars';
 import { DataTable, type Column } from '@/components/ui-kit/data-table';
-import { NoDataState } from '@/components/ui-kit/empty-state';
+import { NoDataState, PeriodEmpty } from '@/components/ui-kit/empty-state';
 import { PageHeader } from '@/components/ui-kit/page-header';
+import { Panel } from '@/components/ui-kit/panel';
 import { StatCard, StatGrid } from '@/components/ui-kit/stat-card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -65,44 +67,42 @@ export default async function CategoriesPage({
       />
 
       {rows.length === 0 ? (
-        <div className="rounded-lg border border-dashed bg-background px-6 py-16 text-center text-sm text-muted-foreground">
+        <PeriodEmpty>
           No hours were logged in {describeFilter(filter)}.
-        </div>
+        </PeriodEmpty>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-10">
           <StatGrid>
-            <StatCard label="Total hours" value={formatHoursPlain(totals.totalHours)} />
-            <StatCard label="Billable" value={formatHoursPlain(totals.billableHours)} hint={formatPercent(totals.productivity)} />
-            <StatCard label="Internal" value={formatHoursPlain(totals.nonBillableHours)} hint={`${rows.filter((r) => !r.isBillable).length} categories`} />
+            <StatCard icon={Clock} label="Total hours" value={formatHoursPlain(totals.totalHours)} />
+            <StatCard icon={Timer} label="Billable" value={formatHoursPlain(totals.billableHours)} hint={formatPercent(totals.productivity)} />
+            <StatCard icon={Hourglass} label="Internal" value={formatHoursPlain(totals.nonBillableHours)} hint={`${rows.filter((r) => !r.isBillable).length} categories`} />
             <StatCard
+              icon={TrendingDown}
               label="Biggest internal drain"
               value={biggestInternal?.category ?? '—'}
+              numeric={false}
               hint={biggestInternal ? formatHoursPlain(biggestInternal.hours) + ' h' : undefined}
             />
-            <StatCard label="Categories in use" value={String(rows.length)} />
+            <StatCard icon={BarChart3} label="Categories in use" value={String(rows.length)} />
           </StatGrid>
 
-          <section className="rounded-lg border bg-background">
-            <div className="border-b px-4 py-3">
-              <h2 className="text-sm font-semibold tracking-tight">Hours per category</h2>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Solid bars are billable work; faded bars are time the agency absorbs.
-              </p>
-            </div>
-            <div className="px-4 py-3">
-              {rows.map((row) => (
-                <MagnitudeBar
-                  key={row.category}
-                  label={row.category}
-                  value={row.hours}
-                  max={max}
-                  amount={formatHoursPlain(row.hours)}
-                  share={formatPercent(row.shareOfHours, 0)}
-                  muted={!row.isBillable}
-                />
-              ))}
-            </div>
-          </section>
+          <Panel
+            title="Hours per category"
+            description="Solid bars are billable work; faded bars are time the agency absorbs."
+            bodyClassName="px-5 py-1"
+          >
+            {rows.map((row) => (
+              <MagnitudeBar
+                key={row.category}
+                label={row.category}
+                value={row.hours}
+                max={max}
+                amount={formatHoursPlain(row.hours)}
+                share={formatPercent(row.shareOfHours, 0)}
+                muted={!row.isBillable}
+              />
+            ))}
+          </Panel>
 
           <DataTable
             title="Category detail"
